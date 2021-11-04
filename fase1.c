@@ -31,6 +31,11 @@ static unsigned int numberPresses2 = 0;
 static unsigned int numberPresses3 = 0;
 static unsigned int numberPresses4 = 0;
 
+static unsigned int irqNumber1;
+static unsigned int irqNumber2;
+static unsigned int irqNumber3;
+static unsigned int irqNumber4;
+
 static int __init ebbgpio_init(void){
 
    	int result = 0;
@@ -47,12 +52,12 @@ static int __init ebbgpio_init(void){
       		return -ENODEV;
 	}
 
- 	redOn = true;
+ 	redOn = false;
    	gpio_request(gpioRed, "sysfs");         
    	gpio_direction_output(gpioRed, redOn);  
    	gpio_export(gpioRed, false);            
 
-	blueOn = true;
+	blueOn = false;
 	gpio_request(gpioBlue, "sysfs");
 	gpio_direction_output(gpioBlue, blueOn);
 	gpio_export(gpioBlue, false);
@@ -76,6 +81,11 @@ static int __init ebbgpio_init(void){
    	gpio_direction_input(gpioButton4);
   	gpio_set_debounce(gpioButton4, 200);
    	gpio_export(gpioButton4, false);
+
+	irqNumber1 = gpio_to_irq(gpioButton1);
+	irqNumber2 = gpio_to_irq(gpioButton2);
+	irqNumber3 = gpio_to_irq(gpioButton3);
+	irqNumber4 = gpio_to_irq(gpioButton4);
 
 }
 
@@ -112,6 +122,8 @@ static void __exit ebbgpio_exit(void){
    	gpio_free(gpioButton4);
 
    	printk(KERN_INFO "fase1.c: Goodbye from the LKM!\n");
+
+
 
 }
 
