@@ -25,7 +25,11 @@ static unsigned int gpioButton4 = 21
 
 static unsigned bool redOn = 0
 static unsigned bool blueOn = 0
-static unsigned int numberPresses = 0;
+
+static unsigned int numberPresses1 = 0;
+static unsigned int numberPresses2 = 0;
+static unsigned int numberPresses3 = 0;
+static unsigned int numberPresses4 = 0;
 
 static int __init ebbgpio_init(void){
 
@@ -74,3 +78,42 @@ static int __init ebbgpio_init(void){
    	gpio_export(gpioButton4, false);
 
 }
+
+static void __exit ebbgpio_exit(void){
+
+  	printk(KERN_INFO "fase1.c: The button 1 state is currently: %d\n", gpio_get_value(gpioButton1));
+	printk(KERN_INFO "fase1.c: The button 2 state is currently: %d\n", gpio_get_value(gpioButton2));
+	printk(KERN_INFO "fase1.c: The button 3 state is currently: %d\n", gpio_get_value(gpioButton3));
+	printk(KERN_INFO "fase1.c: The button 4 state is currently: %d\n", gpio_get_value(gpioButton4));
+
+	printk(KERN_INFO "fase1.c: The button 1 was pressed %d times\n", numberPresses1);
+	printk(KERN_INFO "fase1.c: The button 2 was pressed %d times\n", numberPresses2);
+	printk(KERN_INFO "fase1.c: The button 3 was pressed %d times\n", numberPresses3);
+	printk(KERN_INFO "fase1.c: The button 4 was pressed %d times\n", numberPresses4);
+
+	gpio_set_value(gpioRed, 0);   
+   	gpio_set_value(gpioBlue, 0);   
+   	gpio_unexport(gpioRed);        
+   	gpio_unexport(gpioBlue); 
+         
+   	free_irq(irqNumber, NULL);  
+             
+   	gpio_unexport(gpioButton1);      
+   	gpio_unexport(gpioButton2);    
+   	gpio_unexport(gpioButton3);    
+   	gpio_unexport(gpioButton4);   
+          
+   	gpio_free(gpioRed);   
+   	gpio_free(gpioBlue);   
+                   
+   	gpio_free(gpioButton1);  
+   	gpio_free(gpioButton2);  
+   	gpio_free(gpioButton3);  
+   	gpio_free(gpioButton4);
+
+   	printk(KERN_INFO "fase1.c: Goodbye from the LKM!\n");
+
+}
+
+module_init(ebbgpio_init);
+module_exit(ebbgpio_exit);
