@@ -36,6 +36,8 @@ static unsigned int irqNumber2;
 static unsigned int irqNumber3;
 static unsigned int irqNumber4;
 
+static irq_handler_t ebbgpio_irq_handler1(unsigned int irq, void *dev_id, struct pt_regs *regs);
+
 static int __init ebbgpio_init(void){
 
    	int result = 0;
@@ -87,10 +89,12 @@ static int __init ebbgpio_init(void){
 	irqNumber3 = gpio_to_irq(gpioButton3);
 	irqNumber4 = gpio_to_irq(gpioButton4);
 
-	result = request_irq(irqNumber1, (irq_handler_t) ebbgpio_irq_handler, IRQF_TRIGGER_RISING, "ebb_gpio_handler", NULL);
+	result = request_irq(irqNumber1, (irq_handler_t) ebbgpio_irq_handler1, IRQF_TRIGGER_RISING, "ebb_gpio_handler1", NULL);
+	result = request_irq(irqNumber1, (irq_handler_t) ebbgpio_irq_handler2, IRQF_TRIGGER_RISING, "ebb_gpio_handler2", NULL);
+	result = request_irq(irqNumber1, (irq_handler_t) ebbgpio_irq_handler3, IRQF_TRIGGER_RISING, "ebb_gpio_handler3", NULL);
+	result = request_irq(irqNumber1, (irq_handler_t) ebbgpio_irq_handler4, IRQF_TRIGGER_RISING, "ebb_gpio_handler4", NULL);
 
 	return result;
-
 }
 
 static void __exit ebbgpio_exit(void){
@@ -110,7 +114,10 @@ static void __exit ebbgpio_exit(void){
    	gpio_unexport(gpioRed);        
    	gpio_unexport(gpioBlue); 
          
-   	free_irq(irqNumber, NULL);  
+   	free_irq(irqNumber1, NULL);
+      	free_irq(irqNumber2, NULL);
+	free_irq(irqNumber3, NULL);
+	free_irq(irqNumber4, NULL);
              
    	gpio_unexport(gpioButton1);      
    	gpio_unexport(gpioButton2);    
@@ -126,19 +133,38 @@ static void __exit ebbgpio_exit(void){
    	gpio_free(gpioButton4);
 
    	printk(KERN_INFO "fase1.c: Goodbye from the LKM!\n");
-
-	
-
 }
 
-static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs) {
-
-	redOn = !redOn
+static irq_handler_t ebbgpio_irq_handler1(unsigned int irq, void *dev_id, struct pt_regs *regs) {
+	redOn = true
 	gpio_set_value(gpioRED, RedOn);
 	numberPresses1++;
 	printk("Button 1 pressed!");
 	return (irq_handler_t) IRQ_HANDLED;
+}
 
+static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs){
+   	redOn = false;                          
+   	gpio_set_value(gpioRed, redOn);          
+   	printk("Button 2 pressed!");
+   	numberPresses2++;                         
+   	return (irq_handler_t) IRQ_HANDLED;      
+}
+
+static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs){
+   	blueOn = true;                          
+   	gpio_set_value(gpioBlue, BlueOn);          
+   	printk("Button 3 pressed!");
+   	numberPresses3++;                        
+   	return (irq_handler_t) IRQ_HANDLED;      
+}
+
+static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs){
+   	blueOn = false;                          
+   	gpio_set_value(gpioBlue, BlueOn);          
+   	printk("Button 4 pressed!");
+   	numberPresses4++;                        
+   	return (irq_handler_t) IRQ_HANDLED;      
 }
 
 module_init(ebbgpio_init);
