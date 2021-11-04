@@ -87,6 +87,10 @@ static int __init ebbgpio_init(void){
 	irqNumber3 = gpio_to_irq(gpioButton3);
 	irqNumber4 = gpio_to_irq(gpioButton4);
 
+	result = request_irq(irqNumber1, (irq_handler_t) ebbgpio_irq_handler, IRQF_TRIGGER_RISING, "ebb_gpio_handler", NULL);
+
+	return result;
+
 }
 
 static void __exit ebbgpio_exit(void){
@@ -123,7 +127,17 @@ static void __exit ebbgpio_exit(void){
 
    	printk(KERN_INFO "fase1.c: Goodbye from the LKM!\n");
 
+	
 
+}
+
+static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs) {
+
+	redOn = !redOn
+	gpio_set_value(gpioRED, RedOn);
+	numberPresses1++;
+	printk("Button 1 pressed!");
+	return (irq_handler_t) IRQ_HANDLED;
 
 }
 
