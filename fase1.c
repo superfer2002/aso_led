@@ -15,16 +15,16 @@
 
 MODULE_LICENSE("GPL");
 
-static unsigned int gpioRed = 20
-static unsigned int gpioBlue = 16
+static unsigned int gpioRed = 20;
+static unsigned int gpioBlue = 16;
 
-static unsigned int gpioButton1 = 26
-static unsigned int gpioButton2 = 19
-static unsigned int gpioButton3 = 13
-static unsigned int gpioButton4 = 21
+static unsigned int gpioButton1 = 26;
+static unsigned int gpioButton2 = 19;
+static unsigned int gpioButton3 = 13;
+static unsigned int gpioButton4 = 21;
 
-static unsigned bool redOn = 0
-static unsigned bool blueOn = 0
+static bool redOn = 0;
+static bool blueOn = 0;
 
 static unsigned int numberPresses1 = 0;
 static unsigned int numberPresses2 = 0;
@@ -53,7 +53,7 @@ static int __init ebbgpio_init(void){
       		return -ENODEV;
    	}
 
-   	if (!gpio_is_valid(gpioLED)){
+   	if (!gpio_is_valid(gpioBlue)){
       		printk(KERN_INFO "fase1.c: invalid gpioBlue\n");
       		return -ENODEV;
 	}
@@ -113,62 +113,62 @@ static void __exit ebbgpio_exit(void){
 	printk(KERN_INFO "fase1.c: The button 3 was pressed %d times\n", numberPresses3);
 	printk(KERN_INFO "fase1.c: The button 4 was pressed %d times\n", numberPresses4);
 
-	gpio_set_value(gpioRed, 0);   
-   	gpio_set_value(gpioBlue, 0);   
-   	gpio_unexport(gpioRed);        
-   	gpio_unexport(gpioBlue); 
+	gpio_set_value(gpioRed, 0);
+   	gpio_set_value(gpioBlue, 0);
+   	gpio_unexport(gpioRed);
+   	gpio_unexport(gpioBlue);
          
    	free_irq(irqNumber1, NULL);
       	free_irq(irqNumber2, NULL);
 	free_irq(irqNumber3, NULL);
 	free_irq(irqNumber4, NULL);
              
-   	gpio_unexport(gpioButton1);      
-   	gpio_unexport(gpioButton2);    
-   	gpio_unexport(gpioButton3);    
-   	gpio_unexport(gpioButton4);   
+   	gpio_unexport(gpioButton1);
+   	gpio_unexport(gpioButton2);
+   	gpio_unexport(gpioButton3);
+   	gpio_unexport(gpioButton4);
           
-   	gpio_free(gpioRed);   
-   	gpio_free(gpioBlue);   
+   	gpio_free(gpioRed);
+   	gpio_free(gpioBlue);
                    
-   	gpio_free(gpioButton1);  
-   	gpio_free(gpioButton2);  
-   	gpio_free(gpioButton3);  
+   	gpio_free(gpioButton1);
+   	gpio_free(gpioButton2);
+   	gpio_free(gpioButton3);
    	gpio_free(gpioButton4);
 
    	printk(KERN_INFO "fase1.c: Goodbye from the LKM!\n");
 }
 
 static irq_handler_t ebbgpio_irq_handler1(unsigned int irq, void *dev_id, struct pt_regs *regs) {
-	redOn = true
-	gpio_set_value(gpioRED, RedOn);
+	redOn = true;
+	gpio_set_value(gpioRed, redOn);
 	numberPresses1++;
 	printk("Button 1 pressed!");
 	return (irq_handler_t) IRQ_HANDLED;
 }
 
 static irq_handler_t ebbgpio_irq_handler2(unsigned int irq, void *dev_id, struct pt_regs *regs){
-   	redOn = false;                          
-   	gpio_set_value(gpioRed, redOn);          
-   	printk("Button 2 pressed!");
-   	numberPresses2++;                         
-   	return (irq_handler_t) IRQ_HANDLED;      
+	redOn = false;
+	gpio_set_value(gpioRed, redOn);
+	printk("Button 2 pressed!");
+	numberPresses2++;
+	return (irq_handler_t) IRQ_HANDLED;
 }
 
 static irq_handler_t ebbgpio_irq_handler3(unsigned int irq, void *dev_id, struct pt_regs *regs){
-   	blueOn = true;                          
-   	gpio_set_value(gpioBlue, BlueOn);          
-   	printk("Button 3 pressed!");
-   	numberPresses3++;                        
-   	return (irq_handler_t) IRQ_HANDLED;      
+	blueOn = true;
+	gpio_set_value(gpioBlue, blueOn);
+	printk("Button 3 pressed!");
+	numberPresses3++;
+	return (irq_handler_t) IRQ_HANDLED;
 }
 
 static irq_handler_t ebbgpio_irq_handler4(unsigned int irq, void *dev_id, struct pt_regs *regs){
-   	blueOn = false;                          
-   	gpio_set_value(gpioBlue, BlueOn);          
-   	printk("Button 4 pressed!");
-   	numberPresses4++;                        
-   	return (irq_handler_t) IRQ_HANDLED;      
+	blueOn = false;
+	gpio_set_value(gpioBlue, blueOn);
+	printk("Button 4 pressed!");
+	numberPresses4++;
+	return (irq_handler_t) IRQ_HANDLED;
 }
 
 module_init(ebbgpio_init);

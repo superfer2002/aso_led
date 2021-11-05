@@ -1,11 +1,13 @@
-TARGET_MODULE:=fase1
-ARCH=arm
+obj-m := fase1.o
 
-BUILDSYSTEM_DIR:=/lib/modules/$(shell uname -r)/build
-PWD:=$(shell pwd)
+TARGET_MODULE:=simple_module
 
-obj-m += $(TARGET_MODULE).o
-
+ifneq ($(KERNELRELEASE),)
+	$(TARGET_MODULE)-objs := fase1.o
+	obj-m := $(TARGET_MODULE).o
+else
+	BUILDSYSTEM_DIR:=/lib/modules/$(shell uname -r)/build
+	PWD:=$(shell pwd)
 all:
 	$(MAKE) -C $(BUILDSYSTEM_DIR) M=$(PWD) modules
 clean:
@@ -14,3 +16,4 @@ install:
 	insmod ./$(TARGET_MODULE).ko
 uninstall:
 	rmmod ./$(TARGET_MODULE).ko
+endif
