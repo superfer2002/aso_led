@@ -43,6 +43,9 @@ static irq_handler_t ebbgpio_irq_handler2(unsigned int irq, void *dev_id, struct
 static irq_handler_t ebbgpio_irq_handler3(unsigned int irq, void *dev_id, struct pt_regs *regs);
 static irq_handler_t ebbgpio_irq_handler4(unsigned int irq, void *dev_id, struct pt_regs *regs);
 
+//llamadas a otros scripts
+int call_usermodehelper (const char * path, char ** argv, char ** envp, int wait);
+
 static int __init ebbgpio_init(void){
 
    	int result = 0;
