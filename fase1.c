@@ -12,7 +12,6 @@
 #include <linux/interrupt.h>  
 #include <linux/kobject.h>    
 #include <linux/time.h>       
-#include <linux/unistd.h>
 
 MODULE_LICENSE("GPL");
 
@@ -42,9 +41,6 @@ static irq_handler_t ebbgpio_irq_handler1(unsigned int irq, void *dev_id, struct
 static irq_handler_t ebbgpio_irq_handler2(unsigned int irq, void *dev_id, struct pt_regs *regs);
 static irq_handler_t ebbgpio_irq_handler3(unsigned int irq, void *dev_id, struct pt_regs *regs);
 static irq_handler_t ebbgpio_irq_handler4(unsigned int irq, void *dev_id, struct pt_regs *regs);
-
-//llamadas a otros scripts
-int call_usermodehelper (const char * path, char ** argv, char ** envp, int wait);
 
 static int __init ebbgpio_init(void){
 
@@ -151,52 +147,60 @@ static void __exit ebbgpio_exit(void){
 }
 
 static irq_handler_t ebbgpio_irq_handler1(unsigned int irq, void *dev_id, struct pt_regs *regs) {  //boton 1
+	
+	char *argv[] = {"cat /var/log/kern.log | grep 'fase1.c' > /home/pi/practica/aso_led/button1.sh", NULL};
+	char *envp[] = {"HOME=/", NULL};
+
 	redOn = true;  //encendemos
 	gpio_set_value(gpioRed, redOn);
 	numberPresses1++;  //aumentamos el contador
 	printk("Button 1 pressed!");
 
-	char *argv[] = {"/home/pi/practica/aso_led/button1.sh", NULL};
-	char *envp[] = {"HOME=/", NULL};
 	call_usermodehelper(argv[0], argv, envp, UMH_NO_WAIT);
 
 	return (irq_handler_t) IRQ_HANDLED;
 }
 
 static irq_handler_t ebbgpio_irq_handler2(unsigned int irq, void *dev_id, struct pt_regs *regs){  //boton 2
+
+	char *argv[] = {"cat /var/log/kern.log | grep 'fase1.c' > /home/pi/practica/aso_led/button2.sh", NULL};	
+	char *envp[] = {"HOME=/", NULL};
+
 	redOn = false;  //apagamos
 	gpio_set_value(gpioRed, redOn);
 	printk("Button 2 pressed!");
 	numberPresses2++;  //aumentamos el contador
 
-	char *argv[] = {"/home/pi/practica/aso_led/button2.sh", NULL};
-	char *envp[] = {"HOME=/", NULL};
 	call_usermodehelper(argv[0], argv, envp, UMH_NO_WAIT);
 
 	return (irq_handler_t) IRQ_HANDLED;
 }
 
 static irq_handler_t ebbgpio_irq_handler3(unsigned int irq, void *dev_id, struct pt_regs *regs){  //boton 3
+	
+	char *argv[] = {"cat /var/log/kern.log | grep 'fase1.c' > /home/pi/practica/aso_led/button3.sh", NULL};
+	char *envp[] = {"HOME=/", NULL};
+
 	blueOn = true;  //encendemos
 	gpio_set_value(gpioBlue, blueOn);
 	printk("Button 3 pressed!");
 	numberPresses3++;  //aumentamos el contador
 
-	char *argv[] = {"/home/pi/practica/aso_led/button3.sh", NULL};
-	char *envp[] = {"HOME=/", NULL};
 	call_usermodehelper(argv[0], argv, envp, UMH_NO_WAIT);
 
 	return (irq_handler_t) IRQ_HANDLED;
 }
 
 static irq_handler_t ebbgpio_irq_handler4(unsigned int irq, void *dev_id, struct pt_regs *regs){  //boton 4
+	
+	char *argv[] = {"cat /var/log/kern.log | grep 'fase1.c' > /home/pi/practica/aso_led/button4.sh", NULL};
+	char *envp[] = {"HOME=/", NULL};
+	
 	blueOn = false;  //apagamos
 	gpio_set_value(gpioBlue, blueOn);
 	printk("Button 4 pressed!");
 	numberPresses4++;  //aumentamos el contador
 
-	char *argv[] = {"/home/pi/practica/aso_led/button4.sh", NULL};
-	char *envp[] = {"HOME=/", NULL};
 	call_usermodehelper(argv[0], argv, envp, UMH_NO_WAIT);
 
 	return (irq_handler_t) IRQ_HANDLED;

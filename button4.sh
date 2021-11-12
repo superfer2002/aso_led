@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "Button 4 pressed!"
+echo "Button 4 pressed."
